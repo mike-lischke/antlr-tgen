@@ -1,0 +1,23 @@
+{
+  "name": "@mike-lischke/antlr-tgen",
+  "version": "1.0.0",
+  "description": "A generator for ANTLRng runtime test cases",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mike-lischke/antlr-tgen.git"
+  },
+  "keywords": [
+    "ANTLRng",
+    "Testing"
+  ],
+  "author": "Mike Lischke",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mike-lischke/antlr-tgen/issues"
+  },
+  "homepage": "https://github.com/mike-lischke/antlr-tgen#readme"
+}
