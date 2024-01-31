@@ -7,6 +7,10 @@
     "ignoreWords": [
         "ANTLR",
         "ANTLRng",
+        "Dsuper",
+        "outfile",
+        "stringtemplate",
+        "testsuite",
         "tgen"
     ],
     "import": []

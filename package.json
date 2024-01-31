@@ -2,16 +2,25 @@
     "name": "@mike-lischke/antlr-tgen",
     "version": "1.0.0",
     "description": "A generator for ANTLRng runtime test cases",
-    "main": "index.js",
+    "type": "module",
+    "bin": {
+        "antlr-tgen": "./dist/index.js"
+    },
     "scripts": {
-        "build": "tsc",
-        "test": "test"
+        "prepublishOnly": "npm run build-minified",
+        "build": "tsc && npm run build-cjs",
+        "build-minified": "tsc && npm run build-cjs-minified",
+        "build-bundle": "esbuild ./src/index.js --main-fields=module,main --bundle --platform=node",
+        "build-cjs": "npm run build-bundle -- --outfile=dist/index.cjs --format=cjs",
+        "build-cjs-minified": "npm run build-cjs -- --minify",
+        "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --no-coverage"
     },
     "repository": {
         "type": "git",
         "url": "git://github.com/mike-lischke/antlr-tgen.git"
     },
     "keywords": [
+        "ANTLR",
         "ANTLRng",
         "Testing"
     ],
@@ -20,5 +29,26 @@
     "bugs": {
         "url": "https://github.com/mike-lischke/antlr-tgen/issues"
     },
-    "homepage": "https://github.com/mike-lischke/antlr-tgen#readme"
+    "homepage": "https://github.com/mike-lischke/antlr-tgen#readme",
+    "devDependencies": {
+        "@types/jest": "29.5.11",
+        "@types/node": "20.11.13",
+        "@typescript-eslint/eslint-plugin": "6.20.0",
+        "@typescript-eslint/eslint-plugin-tslint": "6.20.0",
+        "@typescript-eslint/parser": "6.20.0",
+        "esbuild": "0.20.0",
+        "eslint": "8.56.0",
+        "eslint-plugin-import": "2.29.1",
+        "eslint-plugin-jsdoc": "48.0.4",
+        "eslint-plugin-prefer-arrow": "1.2.3",
+        "jest": "29.7.0",
+        "ts-jest": "29.1.2",
+        "ts-node": "10.9.2",
+        "typescript": "5.3.3"
+    },
+    "dependencies": {
+        "antlr4ng": "2.0.10",
+        "antlr4ng-cli": "1.0.7",
+        "stringtemplate4ts": "1.0.1"
+    }
 }
