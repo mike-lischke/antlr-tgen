@@ -65,7 +65,7 @@ Each fields is described below. Note that all relative paths in the file are rel
 * **grammarTemplateFile** (mandatory) - The path to the template file used to generate the grammar files.
 * **specTemplateFile** (mandatory) - The path to the template file used to generate the test (spec) files.
 * **groupIncludes** (optional, default: `none`) - A list of regular expressions to filter the list of descriptor groups. Only groups whose names match one of the expressions will be included in the build. If no includes are given, all groups are included.
-* **groupExcludes** (optional, default: `none`) - The opposite of the group include list. If a group is listed in both lists, it will be excluded.s
+* **groupExcludes** (optional, default: `none`) - The opposite of the group include list. If a group is listed in both lists, it will be excluded.
 * **testIncludes** (optional, default: `none`) - Like `groupIncludes`, but for individual tests. Tests whose group is excluded will be excluded even if they are included in this list.
 * **testExcludes** (optional, default: `none`) - Like `groupExcludes`, but removes individual tests from the build list.
 * **files** (optional, default: `none`) - A list of files to copy after the build. If a target file already exists, is will be forcibly overwritten.
