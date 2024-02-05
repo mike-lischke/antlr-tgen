@@ -1,0 +1,73 @@
+/* eslint-disable max-len, @typescript-eslint/no-unused-vars */
+
+import * as antlr from "antlr4ng";
+import { runTestAndCaptureOutput } from "@helpers/test-helpers.js";
+
+import { <lexerName> } from "./<lexerName>.js";
+<if(parserName)>
+import { <parserName> } from "./<parserName>.js";
+<if(useListener)>
+import { <grammarName>Listener } from "./<grammarName>Listener.js";
+<endif>
+<if(useVisitor)>
+import { <grammarName>Visitor } from "./<grammarName>Visitor.js";
+<endif>
+
+class TreeShapeListener implements antlr.ParseTreeListener {
+    public enterEveryRule(ctx: antlr.ParserRuleContext) {
+        for (let i = 0; i \< ctx.getChildCount(); i++) {
+            const child = ctx.getChild(i) as antlr.RuleContext;
+            const parent = child.parent;
+            if (parent!.ruleContext !== ctx || !(parent instanceof antlr.RuleContext)) {
+                throw new Error("Invalid parse tree shape detected.");
+            }
+        }
+    }
+
+    public visitTerminal(node: antlr.TerminalNode): void { }
+    public visitErrorNode(node: antlr.ErrorNode): void { }
+    public exitEveryRule(ctx: antlr.ParserRuleContext): void { }
+}
+<endif>
+
+const main = (text: string): void => {
+    const input = antlr.CharStreams.fromString(text);
+    const lexer = new <lexerName>(input);
+    const stream = new antlr.CommonTokenStream(lexer);
+<if(parserName)>
+    const parser = new <parserName>(stream);
+<if(showDiagnosticErrors)>
+    parser.addErrorListener(new antlr.DiagnosticErrorListener());
+<endif>
+    parser.printer = {
+        println: (s: string): void => { console.log(s); },
+        print: (s: string): void => { process.stdout.write(s); },
+    };
+    parser.interpreter.predictionMode = antlr.PredictionMode.<predictionMode>;
+<if(!buildParseTree)>
+    parser.buildParseTrees = false;
+<endif>
+    const tree = parser.<parserStartRuleName>();
+    antlr.ParseTreeWalker.DEFAULT.walk(new TreeShapeListener(), tree);
+<else>
+    stream.fill();
+    const tokens = stream.getTokens();
+    for (const token of tokens) {
+        console.log(token.toString());
+    }
+<if(showDFA)>
+    process.stdout.write(lexer.interpreter.decisionToDFA[antlr.Lexer.DEFAULT_MODE].toLexerString());
+<endif>
+<endif>
+};
+
+describe("<testName>", () => {
+    <testAnnotation>("run", () => {
+        const input = "<input>";
+        const expectedOutput = "<expectedOutput>";
+        const expectedErrors = "<expectedErrors>";
+        const [output, errors] = runTestAndCaptureOutput(main, input);
+        expect(output).toEqual(expectedOutput);
+        expect(errors).toEqual(expectedErrors);
+    });
+});

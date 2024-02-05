@@ -1,0 +1,100 @@
+{
+  "$ref": "#/definitions/IConfiguration",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "IConfiguration": {
+      "additionalProperties": false,
+      "description": "Structure of a configuration JSON file. All paths are relative to the configuration file.",
+      "properties": {
+        "files": {
+          "description": "A list of files to copy after the generation. If the target path is not specified, the file will be copied to the root of the target directory. All files end up in the same directory, regardless whether the source pattern affects multiple folders, so make sure there are no name conflicts. The source pattern is a glob pattern.",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "sourcePattern": {
+                "type": "string"
+              },
+              "targetPath": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sourcePattern"
+            ],
+            "type": "object"
+          },
+          "maxItems": 1,
+          "minItems": 1,
+          "type": "array"
+        },
+        "grammarTemplateFile": {
+          "description": "The path to the template for the test grammars.",
+          "type": "string"
+        },
+        "groupExcludes": {
+          "description": "A regex pattern, specifying groups to exclude from the generation process. If a group matches this and the `groupIncludes` pattern, it will be excluded.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "groupIncludes": {
+          "description": "A regex pattern, specifying groups to include in the generation process.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "language": {
+          "description": "The language identifier as registered with ANTLRng.",
+          "type": "string"
+        },
+        "specTemplateFile": {
+          "description": "The path to the template of the test file that's generated for each test case.",
+          "type": "string"
+        },
+        "targetExtension": {
+          "description": "The file extension to use for generated source files.",
+          "type": "string"
+        },
+        "targetPath": {
+          "description": "The path where to store the generated test cases. If not specified `./tests` is assumed.",
+          "type": "string"
+        },
+        "testAnnotations": {
+          "description": "A list of 2 values to be used for annotating a test (for an enabled/disabled tests)",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "testExcludes": {
+          "description": "A regex pattern, specifying tests for exclusion from the generation process. If a test matches this and the `testIncludes` pattern, it will be excluded.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "testFileName": {
+          "description": "The name of the generated test file (default: \"Test.<extension>\")",
+          "type": "string"
+        },
+        "testIncludes": {
+          "description": "A regex pattern, specifying names of tests to be included in the generation process.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "language",
+        "targetExtension",
+        "specTemplateFile",
+        "grammarTemplateFile",
+        "files"
+      ],
+      "type": "object"
+    }
+  }
+}

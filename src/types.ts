@@ -6,9 +6,11 @@
 
 export interface IRunOptions {
     grammarFileName: string;
+    targetExtension: string;
     grammarStr: string;
     parserName?: string;
     lexerName?: string;
+    testFileName?: string;
     grammarName?: string;
     useListener: boolean;
     useVisitor: boolean;
@@ -21,7 +23,6 @@ export interface IRunOptions {
     superClass?: string;
     predictionMode: string;
     buildParseTree: boolean;
-
 }
 
 /**
@@ -79,3 +80,53 @@ export enum GrammarType {
     CompositeLexer,
     CompositeParser,
 }
+
+/** Structure of a configuration JSON file. All paths are relative to the configuration file. */
+export interface IConfiguration {
+    /** The language identifier as registered with ANTLRng. */
+    language: string;
+
+    /** The file extension to use for generated source files. */
+    targetExtension: string;
+
+    /** The path to the template of the test file that's generated for each test case. */
+    specTemplateFile: string;
+
+    /** The path to the template for the test grammars. */
+    grammarTemplateFile: string;
+
+    /** The path where to store the generated test cases. If not specified `./tests` is assumed. */
+    targetPath?: string;
+
+    /** The name of the generated test file (default: "Test.<extension>") */
+    testFileName?: string;
+
+    /** A list of 2 values to be used for annotating a test (for an enabled/disabled tests) */
+    testAnnotations?: string[];
+
+    /** A regex pattern, specifying groups to include in the generation process. */
+    groupIncludes?: string[];
+
+    /**
+     * A regex pattern, specifying groups to exclude from the generation process.
+     * If a group matches this and the `groupIncludes` pattern, it will be excluded.
+     */
+    groupExcludes?: string[];
+
+    /** A regex pattern, specifying names of tests to be included in the generation process. */
+    testIncludes?: string[];
+
+    /**
+     * A regex pattern, specifying tests for exclusion from the generation process.
+     * If a test matches this and the `testIncludes` pattern, it will be excluded.
+     */
+    testExcludes?: string[];
+
+    /**
+     * A list of files to copy after the generation. If the target path is not specified, the file will be copied
+     * to the root of the target directory. All files end up in the same directory, regardless whether the source
+     * pattern affects multiple folders, so make sure there are no name conflicts.
+     * The source pattern is a glob pattern.
+     */
+    files: [{ sourcePattern: string, targetPath?: string; }];
+};

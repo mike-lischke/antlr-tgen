@@ -1,17 +1,24 @@
 {
     "version": "0.2",
-    "ignorePaths": [],
+    "ignorePaths": [
+        ".eslintrc.json"
+    ],
     "dictionaryDefinitions": [],
     "dictionaries": [],
     "words": [],
     "ignoreWords": [
         "ANTLR",
         "ANTLRng",
+        "Dlanguage",
         "Dsuper",
+        "Xexact",
         "outfile",
+        "parens",
         "stringtemplate",
         "testsuite",
-        "tgen"
+        "tgen",
+        "unmocked",
+        "workdir"
     ],
     "import": []
 }

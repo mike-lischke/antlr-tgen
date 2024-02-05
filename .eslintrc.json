@@ -19,7 +19,7 @@
     "parserOptions": {
         "project": [
             "tsconfig.json",
-            "runtime-testsuite/tsconfig.json"
+            "tests/tsconfig.json"
         ],
         "sourceType": "module",
         "implicitStrict": true,
@@ -572,7 +572,7 @@
                     "camelCase"
                 ],
                 "filter": {
-                    "regex": "^_",
+                    "regex": "^_|^[0-9]+$",
                     "match": false
                 }
             },
@@ -610,23 +610,22 @@
                 "selector": "interface",
                 "format": [
                     "PascalCase"
+                ],
+                "prefix": [
+                    "I"
                 ]
             },
             {
-                "selector": "variable",
-                "modifiers": [
-                    "const"
-                ],
-                "format": null
-            },
-            {
-                "selector": "classProperty",
-                "format": null
+                "selector": "import",
+                "format": [
+                    "PascalCase",
+                    "camelCase"
+                ]
             }
         ],
-        "@typescript-eslint/restrict-template-expressions": "off",
-        "@typescript-eslint/restrict-plus-operands": "off",
+        "@typescript-eslint/triple-slash-reference": "off",
         "@typescript-eslint/no-base-to-string": "off",
+        "@typescript-eslint/no-redundant-type-constituents": "off",
         "jsdoc/check-alignment": "error",
         "jsdoc/check-indentation": "off",
         "jsdoc/require-param-type": "off",
@@ -634,7 +633,6 @@
         "jsdoc/tag-lines": [
             // Have to switch this off, as it is not good enough to be used.
             "off"
-        ],
-        "jsdoc/no-undefined-types": "off"
+        ]
     }
 }

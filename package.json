@@ -7,13 +7,13 @@
         "antlr-tgen": "./dist/index.js"
     },
     "scripts": {
-        "prepublishOnly": "npm run build-minified",
-        "build": "tsc && npm run build-cjs",
-        "build-minified": "tsc && npm run build-cjs-minified",
-        "build-bundle": "esbuild ./src/index.js --main-fields=module,main --bundle --platform=node",
-        "build-cjs": "npm run build-bundle -- --outfile=dist/index.cjs --format=cjs",
-        "build-cjs-minified": "npm run build-cjs -- --minify",
-        "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --no-coverage"
+        "prepublishOnly": "npm run build",
+        "build": "esbuild ./src/index.ts --main-fields=module,main --bundle --outfile=dist/index.cjs --platform=node --format=cjs --minify",
+        "generate": "antlr4ng -Xexact-output-dir",
+        "generate-configuration-schema": "./node_modules/.bin/ts-json-schema-generator --path 'src/types.ts' --type 'IConfiguration' > src/config-schema.json",
+        "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --no-coverage",
+        "run-generator-ts": "node --no-warnings --experimental-vm-modules --loader ts-node/esm src/index.ts --config tests/config-ts.json",
+        "run-generator-cpp": "node --no-warnings --experimental-vm-modules --loader ts-node/esm src/index.ts --config tests/config-cpp.json"
     },
     "repository": {
         "type": "git",
@@ -30,6 +30,10 @@
         "url": "https://github.com/mike-lischke/antlr-tgen/issues"
     },
     "homepage": "https://github.com/mike-lischke/antlr-tgen#readme",
+    "files": [
+        "dist",
+        "resources"
+    ],
     "devDependencies": {
         "@types/jest": "29.5.11",
         "@types/node": "20.11.13",
@@ -39,7 +43,7 @@
         "esbuild": "0.20.0",
         "eslint": "8.56.0",
         "eslint-plugin-import": "2.29.1",
-        "eslint-plugin-jsdoc": "48.0.4",
+        "eslint-plugin-jsdoc": "^48.0.4",
         "eslint-plugin-prefer-arrow": "1.2.3",
         "jest": "29.7.0",
         "ts-jest": "29.1.2",
@@ -47,8 +51,14 @@
         "typescript": "5.3.3"
     },
     "dependencies": {
+        "@readme/better-ajv-errors": "1.6.0",
+        "ajv": "8.12.0",
         "antlr4ng": "2.0.10",
         "antlr4ng-cli": "1.0.7",
-        "stringtemplate4ts": "1.0.1"
+        "chalk": "5.3.0",
+        "commander": "11.1.0",
+        "glob": "^10.3.10",
+        "stringtemplate4ts": "1.0.1",
+        "ts-json-schema-generator": "1.5.0"
     }
 }

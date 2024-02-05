@@ -1,0 +1,8 @@
+{
+    "language": "Cpp",
+    "targetPath": "tests/generated/cpp",
+    "targetExtension": "cpp",
+    "grammarTemplateFile": "tests/templates/Cpp.test.stg",
+    "specTemplateFile": "tests/templates/Test.cpp.stg",
+    "testIncludes": []
+}

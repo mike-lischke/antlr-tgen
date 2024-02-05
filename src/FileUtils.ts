@@ -65,6 +65,10 @@ export class FileUtils {
                 FileUtils.copyFileOrFolder(path.join(from, f), path.join(to, f));
             });
         } else {
+            const stat = fs.statSync(to);
+            if (stat.isDirectory()) {
+                to = path.join(to, path.basename(from));
+            }
             fs.copyFileSync(from, to);
         }
     }

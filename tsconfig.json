@@ -3,13 +3,13 @@
         "target": "ESNext",
         "module": "Node16",
         "moduleResolution": "Node16",
+        "resolveJsonModule": true,
         "sourceMap": false,
         "esModuleInterop": true,
         "noEmit": true,
         "outDir": "dist",
         "lib": [
             "ESNext",
-            "DOM"
         ],
         "noImplicitAny": true,
         "strictNullChecks": true,
@@ -27,5 +27,6 @@
     "exclude": [
         "node_modules",
         "dist",
+        "tests/**/*.ts",
     ],
 }
