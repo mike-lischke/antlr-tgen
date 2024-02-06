@@ -21,6 +21,7 @@ import { Generator } from "./Generator.js";
 import { globSync } from "glob";
 import { dirname, join } from "path";
 import { FileUtils } from "./FileUtils.js";
+import { fileURLToPath } from "url";
 
 interface IAppParameters extends OptionValues {
     /**
@@ -93,9 +94,17 @@ if (!options.silent) {
     console.log("Processing options...");
 }
 
-const configPath = dirname(options.config!);
+// We have to derive the work direct from the current file path, which differs between running here and
+// running as a package. The strategy is to find the closest package.json file and use that as the base.
+let basePath = dirname(fileURLToPath(import.meta.url));
+while (!existsSync(join(basePath, "package.json")) && basePath !== "/") {
+    basePath = dirname(basePath);
+}
+
+const configPath = join(process.cwd(), dirname(options.config!));
 const details = processConfiguration(options.config);
-const generator = new Generator(configPath, details, options.silent ?? false, options.verbose ?? false);
+
+const generator = new Generator(basePath, configPath, details, options.silent ?? false, options.verbose ?? false);
 generator.generate();
 console.log();
 

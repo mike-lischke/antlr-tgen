@@ -4,25 +4,13 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-export interface IRunOptions {
-    grammarFileName: string;
-    targetExtension: string;
+export interface IGenerationOptions {
     grammarStr: string;
     parserName?: string;
     lexerName?: string;
-    testFileName?: string;
     grammarName?: string;
     useListener: boolean;
     useVisitor: boolean;
-    startRuleName?: string;
-    input: string;
-    profile: boolean;
-    showDiagnosticErrors: boolean;
-    traceATN: boolean;
-    showDFA: boolean;
-    superClass?: string;
-    predictionMode: string;
-    buildParseTree: boolean;
 }
 
 /**

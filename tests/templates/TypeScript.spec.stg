@@ -1,7 +1,6 @@
 /* eslint-disable max-len, @typescript-eslint/no-unused-vars */
 
 import * as antlr from "antlr4ng";
-import { runTestAndCaptureOutput } from "@helpers/test-helpers.js";
 
 import { <lexerName> } from "./<lexerName>.js";
 <if(parserName)>
@@ -30,18 +29,36 @@ class TreeShapeListener implements antlr.ParseTreeListener {
 }
 <endif>
 
+let capturedOutput = "";
+let capturedErrors = "";
+
+class CaptureErrorListener extends antlr.BaseErrorListener {
+    public override syntaxError\<T extends antlr.ATNSimulator>(recognizer: antlr.Recognizer\<T> | null,
+        offendingSymbol: unknown, line: number, charPositionInLine: number, msg: string | null,
+        _e: antlr.RecognitionException | null): void {
+        capturedErrors += "line " + line + ":" + charPositionInLine + " " + msg + "\n";
+    }
+}
+
 const main = (text: string): void => {
     const input = antlr.CharStreams.fromString(text);
     const lexer = new <lexerName>(input);
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(new CaptureErrorListener());
+
     const stream = new antlr.CommonTokenStream(lexer);
+
 <if(parserName)>
     const parser = new <parserName>(stream);
+    parser.removeErrorListeners();
+    parser.addErrorListener(new CaptureErrorListener());
+
 <if(showDiagnosticErrors)>
     parser.addErrorListener(new antlr.DiagnosticErrorListener());
 <endif>
     parser.printer = {
-        println: (s: string): void => { console.log(s); },
-        print: (s: string): void => { process.stdout.write(s); },
+        println: (s: string): void => { capturedOutput += s + "\n"; },
+        print: (s: string): void => { capturedOutput += s; },
     };
     parser.interpreter.predictionMode = antlr.PredictionMode.<predictionMode>;
 <if(!buildParseTree)>
@@ -53,21 +70,27 @@ const main = (text: string): void => {
     stream.fill();
     const tokens = stream.getTokens();
     for (const token of tokens) {
-        console.log(token.toString());
+        global.antlrTestWriteLn(token.toString());
     }
 <if(showDFA)>
-    process.stdout.write(lexer.interpreter.decisionToDFA[antlr.Lexer.DEFAULT_MODE].toLexerString());
+    global.antlrTestWrite(lexer.interpreter.decisionToDFA[antlr.Lexer.DEFAULT_MODE].toLexerString());
 <endif>
 <endif>
 };
 
 describe("<testName>", () => {
     <testAnnotation>("run", () => {
+        global.antlrTestWrite = (s: string): void => { capturedOutput += s; };
+        global.antlrTestWriteLn = (s: string): void => { capturedOutput += s + "\n"; };
+
         const input = "<input>";
         const expectedOutput = "<expectedOutput>";
         const expectedErrors = "<expectedErrors>";
-        const [output, errors] = runTestAndCaptureOutput(main, input);
-        expect(output).toEqual(expectedOutput);
-        expect(errors).toEqual(expectedErrors);
+        main(input);
+        expect(capturedOutput).toEqual(expectedOutput);
+        expect(capturedErrors).toEqual(expectedErrors);
+
+        global.antlrTestWrite = undefined;
+        global.antlrTestWriteLn = undefined;
     });
 });

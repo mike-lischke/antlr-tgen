@@ -9,7 +9,7 @@ import { ST, STGroup, STGroupFile, StringRenderer } from "stringtemplate4ts";
 import chalk from "chalk";
 import { spawnSync } from "child_process";
 
-import { GrammarType, IConfiguration, IRunOptions, IRuntimeTestDescriptor } from "./types.js";
+import { GrammarType, IConfiguration, IGenerationOptions, IRuntimeTestDescriptor } from "./types.js";
 import { CustomDescriptors } from "./CustomDescriptors.js";
 import { RuntimeTestDescriptorParser } from "./RuntimeTestDescriptorParser.js";
 import { FileUtils } from "./FileUtils.js";
@@ -19,16 +19,14 @@ import { FileUtils } from "./FileUtils.js";
  * and generates all files needed to run the tests, including the test spec file.
  */
 
-const descriptorsPath = "resources/descriptors";
-
 export class Generator {
 
     private readonly testDescriptors = new Map<string, IRuntimeTestDescriptor[]>();
     private readonly stringRenderer = new StringRenderer();
     private testCount = 0;
 
-    public constructor(private basePath: string, private config: IConfiguration, private silent: boolean,
-        private verbose: boolean) {
+    public constructor(private basePath: string, private configPath: string, private config: IConfiguration,
+        private silent: boolean, private verbose: boolean) {
     }
 
     public generate(): void {
@@ -44,6 +42,8 @@ export class Generator {
     }
 
     private readDescriptorsFromDisk(): void {
+        const descriptorsPath = join(this.basePath, "resources/descriptors");
+
         readdirSync(descriptorsPath).forEach((entry) => {
             const stat = statSync(join(descriptorsPath, entry));
             if (stat.isDirectory()) {
@@ -90,7 +90,7 @@ export class Generator {
     private writeTestFiles(): void {
         let currentTest = 0;
         for (const [caption, descriptors] of this.testDescriptors) {
-            const groupPath = join(this.basePath, this.config.targetPath ?? "tests", caption);
+            const groupPath = join(this.configPath, this.config.targetPath ?? "tests", caption);
 
             for (const descriptor of descriptors) {
                 if (!this.isTestIncluded(caption, descriptor.name)) {
@@ -108,7 +108,7 @@ export class Generator {
                 const testPath = join(groupPath, descriptor.name);
                 mkdirSync(testPath, { recursive: true });
 
-                const targetTemplates = new STGroupFile(join(this.basePath, this.config.grammarTemplateFile), "utf-8",
+                const targetTemplates = new STGroupFile(join(this.configPath, this.config.grammarTemplateFile), "utf-8",
                     "<", ">");
                 targetTemplates.registerRenderer(String, this.stringRenderer);
 
@@ -134,7 +134,6 @@ export class Generator {
                 let lexerName: string | undefined;
                 let parserName: string | undefined;
                 let useListenerOrVisitor: boolean;
-                let superClass: string | undefined;
                 if (descriptor.testType === GrammarType.Parser || descriptor.testType === GrammarType.CompositeParser) {
                     lexerName = descriptor.grammarName + "Lexer";
                     parserName = descriptor.grammarName + "Parser";
@@ -167,25 +166,13 @@ export class Generator {
                     }
                 }
 
-                const runOptions: IRunOptions = {
-                    grammarFileName: descriptor.grammarName + ".g4",
-                    targetExtension: this.config.targetExtension,
+                const runOptions: IGenerationOptions = {
                     grammarStr: grammar,
                     grammarName,
                     parserName,
                     lexerName,
-                    testFileName: this.config.testFileName,
                     useListener: useListenerOrVisitor,
                     useVisitor: useListenerOrVisitor,
-                    startRuleName: descriptor.startRule,
-                    input: descriptor.input,
-                    profile: false,
-                    showDiagnosticErrors: descriptor.showDiagnosticErrors,
-                    traceATN: descriptor.traceATN,
-                    showDFA: descriptor.showDFA,
-                    superClass,
-                    predictionMode: descriptor.predictionMode,
-                    buildParseTree: descriptor.buildParseTree,
                 };
 
                 this.generateParserFiles(testPath, runOptions, descriptor);
@@ -222,7 +209,7 @@ export class Generator {
         options.push(join(workdir, grammarFileName));
 
         // Generate test parsers, lexers and listeners.
-        const output = spawnSync("npm", ["run", "generate", "--", ...options], {
+        const output = spawnSync("antlr4ng", ["-Xexact-output-dir", ...options], {
             encoding: "utf-8",
             cwd: workdir,
             stdio: ["ignore", "pipe", "pipe"],
@@ -276,24 +263,25 @@ export class Generator {
      *
      * @param targetPath The path to the test file.
      * @param runOptions Details for the generation.
-     * @param descriptor
+     * @param descriptor The descriptor for the test.
      */
-    private writeTestFile(targetPath: string, runOptions: IRunOptions, descriptor: IRuntimeTestDescriptor): void {
-        const text = readFileSync(join(this.basePath, this.config.specTemplateFile), { encoding: "utf-8" });
+    private writeTestFile(targetPath: string, runOptions: IGenerationOptions,
+        descriptor: IRuntimeTestDescriptor): void {
+        const text = readFileSync(join(this.configPath, this.config.specTemplateFile), { encoding: "utf-8" });
         const outputFileST = new ST(text);
         outputFileST.add("grammarName", runOptions.grammarName);
         outputFileST.add("lexerName", runOptions.lexerName);
         outputFileST.add("parserName", runOptions.parserName);
-        outputFileST.add("parserStartRuleName", runOptions.startRuleName ?? "");
-        outputFileST.add("showDiagnosticErrors", runOptions.showDiagnosticErrors);
-        outputFileST.add("traceATN", runOptions.traceATN);
-        outputFileST.add("profile", runOptions.profile);
-        outputFileST.add("showDFA", runOptions.showDFA);
+        outputFileST.add("parserStartRuleName", descriptor.startRule ?? "");
+        outputFileST.add("showDiagnosticErrors", descriptor.showDiagnosticErrors);
+        outputFileST.add("traceATN", descriptor.traceATN);
+        outputFileST.add("profile", false);
+        outputFileST.add("showDFA", descriptor.showDFA);
         outputFileST.add("useListener", runOptions.useListener);
         outputFileST.add("useVisitor", runOptions.useVisitor);
-        outputFileST.add("predictionMode", runOptions.predictionMode);
-        outputFileST.add("buildParseTree", runOptions.buildParseTree);
-        outputFileST.add("input", this.consolidate(runOptions.input));
+        outputFileST.add("predictionMode", descriptor.predictionMode);
+        outputFileST.add("buildParseTree", descriptor.buildParseTree);
+        outputFileST.add("input", this.consolidate(descriptor.input));
         outputFileST.add("expectedOutput", this.consolidate(descriptor.output));
         outputFileST.add("expectedErrors", this.consolidate(descriptor.errors));
         outputFileST.add("testName", descriptor.name);
@@ -305,8 +293,8 @@ export class Generator {
         }
         outputFileST.add("testAnnotation", command);
 
-        const fileName = runOptions.testFileName ?? "Test";
-        writeFileSync(join(targetPath, `${fileName}.${runOptions.targetExtension}`), outputFileST.render());
+        const fileName = this.config.testFileName ?? "Test";
+        writeFileSync(join(targetPath, `${fileName}.${this.config.targetExtension}`), outputFileST.render());
     };
 
     /**
@@ -314,30 +302,32 @@ export class Generator {
      *
      * @param targetPath The folder for this particular test.
      * @param runOptions Details for the generation.
-     * @param descriptor
+     * @param descriptor The descriptor for the test.
      */
-    private generateParserFiles(targetPath: string, runOptions: IRunOptions, descriptor: IRuntimeTestDescriptor): void {
+    private generateParserFiles(targetPath: string, runOptions: IGenerationOptions,
+        descriptor: IRuntimeTestDescriptor): void {
         const options: string[] = [];
         if (runOptions.useVisitor) {
             options.push("-visitor");
         }
 
-        if (runOptions.superClass) {
+        /*if (runOptions.superClass) {
             options.push("-DsuperClass=" + runOptions.superClass);
-        }
+        }*/
 
         FileUtils.mkdir(targetPath);
-        FileUtils.writeFile(targetPath, runOptions.grammarFileName, runOptions.grammarStr);
 
-        const success = this.generateANTLRFilesInWorkDir(targetPath, this.config.language, runOptions.grammarFileName,
-            options);
+        const grammarFileName = descriptor.grammarName + ".g4";
+        FileUtils.writeFile(targetPath, grammarFileName, runOptions.grammarStr);
+
+        const success = this.generateANTLRFilesInWorkDir(targetPath, this.config.language, grammarFileName, options);
 
         if (!success) {
             return;
         }
 
         this.writeTestFile(targetPath, runOptions, descriptor);
-        writeFileSync(join(targetPath, "input"), runOptions.input);
+        writeFileSync(join(targetPath, "input"), descriptor.input);
     };
 
     private matchesPattern(name: string, patterns: string[]): boolean {

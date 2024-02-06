@@ -15,11 +15,6 @@
         "allowSyntheticDefaultImports": true,
         "strictNullChecks": true,
         "skipLibCheck": true,
-        "paths": {
-            "@helpers/*": [
-                "./utils/*"
-            ]
-        },
     },
     "include": [
         "**/*.ts",
