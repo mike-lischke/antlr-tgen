@@ -1,6 +1,6 @@
 {
     "name": "@mike-lischke/antlr-tgen",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "description": "A generator for ANTLRng runtime test cases",
     "type": "module",
     "bin": {

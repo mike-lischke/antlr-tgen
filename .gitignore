@@ -3,3 +3,4 @@ output
 coverage
 dist
 tests/generated
+index.mjs
