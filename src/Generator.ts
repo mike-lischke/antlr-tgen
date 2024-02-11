@@ -102,7 +102,7 @@ export class Generator {
                 if (!this.silent) {
                     const message = `Processing (${Math.round(10000 * currentTest / this.testCount) / 100}%): ` +
                         `${caption} > ${descriptor.name}`;
-                    process.stdout.write(chalk.green(`\r${message.padEnd(120)}`));
+                    process.stdout.write(chalk.green(`\r${message.padEnd(100)}`));
                 }
 
                 const testPath = join(groupPath, descriptor.name);
@@ -216,7 +216,7 @@ export class Generator {
         });
 
         // Consider stderr output as warnings if the process exited successfully.
-        if (output.stderr.length > 0) {
+        if (output.stderr && output.stderr.length > 0) {
             const lines = output.stderr.split("\n");
 
             // Remove debugger attached and waiting for debugger messages.

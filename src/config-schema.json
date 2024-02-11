@@ -23,8 +23,6 @@
             ],
             "type": "object"
           },
-          "maxItems": 1,
-          "minItems": 1,
           "type": "array"
         },
         "grammarTemplateFile": {
@@ -91,8 +89,7 @@
         "language",
         "targetExtension",
         "specTemplateFile",
-        "grammarTemplateFile",
-        "files"
+        "grammarTemplateFile"
       ],
       "type": "object"
     }

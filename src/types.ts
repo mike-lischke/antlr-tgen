@@ -116,5 +116,5 @@ export interface IConfiguration {
      * pattern affects multiple folders, so make sure there are no name conflicts.
      * The source pattern is a glob pattern.
      */
-    files: [{ sourcePattern: string, targetPath?: string; }];
+    files?: Array<{ sourcePattern: string, targetPath?: string; }>;
 };
