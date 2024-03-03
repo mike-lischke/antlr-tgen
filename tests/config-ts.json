@@ -7,13 +7,13 @@
         "test",
         "xit"
     ],
-    "grammarTemplateFile": "./templates/TypeScript.grammar.stg",
-    "specTemplateFile": "./templates/TypeScript.spec.stg",
+    "grammarTemplateFile": "./fixtures/templates/TypeScript.grammar.stg",
+    "specTemplateFile": "./fixtures/templates/TypeScript.spec.stg",
     "groupIncludes": [],
     "testIncludes": [],
     "files": [
         {
-            "sourcePattern": "./fixtures/typescript/tsconfig.json",
+            "sourcePattern": "./fixtures/tsconfig.json",
             "targetPath": "./generated/typescript/"
         }
     ]
