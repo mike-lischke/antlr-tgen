@@ -119,6 +119,10 @@ How to accomplish the last step depends on your target language and how tests in
 
 ## Release Notes
 
+### 1.0.8
+
+Upgraded dependencies.
+
 ### 1.0.7
 
 Fixed path handling + repository clean up.
