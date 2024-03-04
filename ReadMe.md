@@ -47,6 +47,10 @@ The configuration file is pretty simple. Here's an example for the TypeScript ru
     "groupExcludes": [],
     "testIncludes": [],
     "testExcludes": [],
+    "testAnnotations": [
+        "test",
+        "xit"
+    ],
     "files": [
         {
             "sourcePattern": "./fixtures/typescript/tsconfig.json",
@@ -62,7 +66,7 @@ Each fields is described below. Note that all relative paths in the file are rel
 * **targetPath** (optional, default: `./tests`) - The root path for the generated tests.
 * **targetExtension** (mandatory) - The extension to use for the generated test (spec) files.
 * **testFileName** (optional, default: `Test`) - The name of the test (spec) file, without the extension.
-* **testAnnotations** (optional, default: `none`) - A pair of strings that can be used in the test template to enhance a test method or class (examples are `it`/`xit` for Jest or `@Test`/`` for JUnit).
+* **testAnnotations** (optional, default: `none`) - A pair of strings that can be used in the test template to enhance a test method or class (examples are `it`/`xit` for Jest or `@Test`/"" for JUnit). This is subject to change. A simple flag for an enabled or disabled state would do the job as well.
 * **grammarTemplateFile** (mandatory) - The path to the template file used to generate the grammar files.
 * **specTemplateFile** (mandatory) - The path to the template file used to generate the test (spec) files.
 * **groupIncludes** (optional, default: `none`) - A list of regular expressions to filter the list of descriptor groups. Only groups whose names match one of the expressions will be included in the build. If no includes are given, all groups are included.
@@ -106,6 +110,7 @@ Here's a list of the values that can be used in the test template group file:
 * **input** - The input to use for the test.
 * **expectedOutput** - This is the value to check against the generated output for the test to succeed or fail.
 * **expectedErrors** - Usually empty, but some tests produce expected errors.
+* **testAnnotation** - The value of one of the test annotations given in the config file. The first value is used if the is not disabled, otherwise the second one is passed in.
 
 ## Test Validation
 
