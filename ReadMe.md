@@ -3,7 +3,7 @@
 
 <img src="https://raw.githubusercontent.com/mike-lischke/mike-lischke/master/images/ANTLRng2.svg" title="ANTLR Next Generation" alt="ANTLRng" width="96" height="96"/><label style="font-size: 70%">Part of the Next Generation ANTLR Project</label>
 
-# ANTLR-tgen, the ANTLRng test case generator
+# antlr-tgen, the antlr-ng test case generator
 
 The ANTLR-tgen test generator tool is designed to simplify the development of an ANTLR target runtime. It uses a set of test descriptor files (plain text) and generates all the files needed to test a runtime. This usually includes an input file, grammars and the parser/lexer files generated from them, and a source file that uses the generated parser to process the input and compare it with expected output text and errors. The whole test suite is based on this principle: read input, lex and/or parse it, and check the output.
 
