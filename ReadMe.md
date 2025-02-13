@@ -1,7 +1,10 @@
 [![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/mike-lischke/antlr-tgen/nodejs.yml?style=for-the-badge&logo=github)](https://github.com/mike-lischke/stringtemplate4ts/actions/workflows/nodejs.yml)[![Weekly Downloads](https://img.shields.io/npm/dw/@mike-lischke/antlr-tgen?style=for-the-badge&color=blue)](https://www.npmjs.com/package/antlr-tgen)
 [![npm version](https://img.shields.io/npm/v/@mike-lischke/antlr-tgen?style=for-the-badge&color=yellow)](https://www.npmjs.com/package/antlr4ng)
 
-<img src="https://raw.githubusercontent.com/mike-lischke/mike-lischke/master/images/ANTLRng2.svg" title="ANTLR Next Generation" alt="ANTLRng" width="96" height="96"/><label style="font-size: 70%">Part of the Next Generation ANTLR Project</label>
+<p align="center">
+<img src="https://raw.githubusercontent.com/mike-lischke/mike-lischke/master/images/antlr-ng.svg" title="ANTLR Next Generation" alt="antlr-ng the parser generator" height="200"/><br/>
+<label style="font-size: 120%">Part of the Next Generation ANTLR Project</label>
+</p>
 
 # antlr-tgen, the antlr-ng test case generator
 
