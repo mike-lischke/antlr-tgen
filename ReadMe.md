@@ -127,7 +127,7 @@ How to accomplish the last step depends on your target language and how tests in
 
 ## Release Notes
 
-### 1.0.8
+### 1.0.8 - 1.0.9
 
 Upgraded dependencies.
 

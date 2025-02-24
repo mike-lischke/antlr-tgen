@@ -7,7 +7,7 @@
  */
 
 // @ts-ignore, because when setting node module resolution to Node16, tsc raises an error for the import assertion.
-import configSchema from "./config-schema.json" assert { type: "json" };
+import configSchema from "./config-schema.json";
 
 import { spawnSync } from "child_process";
 import { OptionValues, program } from "commander";

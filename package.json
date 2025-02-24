@@ -1,7 +1,7 @@
 {
     "name": "@mike-lischke/antlr-tgen",
-    "version": "1.0.8",
-    "description": "A generator for ANTLRng runtime test cases",
+    "version": "1.0.9",
+    "description": "A generator for antlr-ng runtime test cases",
     "type": "module",
     "bin": {
         "antlr-tgen": "./index.mjs"
@@ -20,7 +20,7 @@
     },
     "keywords": [
         "ANTLR",
-        "ANTLRng",
+        "antlr-ng",
         "Testing"
     ],
     "author": "Mike Lischke",
@@ -39,8 +39,8 @@
         "@typescript-eslint/eslint-plugin": "7.1.0",
         "@typescript-eslint/eslint-plugin-tslint": "7.0.2",
         "@typescript-eslint/parser": "7.1.0",
-        "antlr4ng": "3.0.0",
-        "esbuild": "0.20.1",
+        "antlr4ng": "3.0.15",
+        "esbuild": "0.25.0",
         "eslint": "8.57.0",
         "eslint-plugin-import": "2.29.1",
         "eslint-plugin-jsdoc": "48.2.0",
@@ -49,15 +49,15 @@
         "ts-jest": "29.1.2",
         "ts-json-schema-generator": "1.5.0",
         "ts-node": "10.9.2",
-        "typescript": "5.3.3"
+        "typescript": "5.7.3"
     },
     "dependencies": {
-        "@readme/better-ajv-errors": "1.6.0",
-        "ajv": "8.12.0",
-        "antlr4ng-cli": "2.0.0",
-        "chalk": "5.3.0",
-        "commander": "12.0.0",
+        "@readme/better-ajv-errors": "2.2.2",
+        "ajv": "8.17.1",
+        "antlr-ng": "1.0.3",
+        "chalk": "5.4.1",
+        "commander": "13.1.0",
         "glob": "10.3.10",
-        "stringtemplate4ts": "1.0.1"
+        "stringtemplate4ts": "1.0.9"
     }
 }
