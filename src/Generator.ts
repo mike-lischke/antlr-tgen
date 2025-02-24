@@ -198,26 +198,27 @@ export class Generator {
             options.push(workdir);
         }
 
-        if (!options.includes("-lib")) {
-            options.push("-lib");
+        if (!options.includes("--lib")) {
+            options.push("--lib");
             options.push(workdir);
         }
-        if (!options.includes("-encoding")) {
-            options.push("-encoding");
+        if (!options.includes("--encoding")) {
+            options.push("--encoding");
             options.push("UTF-8");
         }
         options.push(join(workdir, grammarFileName));
 
         // Generate test parsers, lexers and listeners.
-        const output = spawnSync("antlr4ng", ["-Xexact-output-dir", ...options], {
+        const output = spawnSync("antlr-ng", ["--exact-output-dir", ...options], {
             encoding: "utf-8",
             cwd: workdir,
             stdio: ["ignore", "pipe", "pipe"],
         });
 
         // Consider stderr output as warnings if the process exited successfully.
-        if (output.stderr && output.stderr.length > 0) {
-            const lines = output.stderr.split("\n");
+        const errorMessage = output.error?.message;
+        if (errorMessage && errorMessage.length > 0) {
+            const lines = errorMessage.split("\n");
 
             // Remove debugger attached and waiting for debugger messages.
             const filteredLines = lines.filter((line) => {
@@ -246,7 +247,7 @@ export class Generator {
             }
         }
 
-        return output.status === 0;
+        return output.status === 0 && !errorMessage;
     }
 
     private consolidate(text: string): string {
@@ -308,7 +309,7 @@ export class Generator {
         descriptor: IRuntimeTestDescriptor): void {
         const options: string[] = [];
         if (runOptions.useVisitor) {
-            options.push("-visitor");
+            options.push("-v");
         }
 
         /*if (runOptions.superClass) {

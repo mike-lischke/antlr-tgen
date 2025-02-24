@@ -6,22 +6,23 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-// @ts-ignore, because when setting node module resolution to Node16, tsc raises an error for the import assertion.
-import configSchema from "./config-schema.json";
-
+import betterAjvErrors from "@readme/better-ajv-errors";
+import Ajv, { ErrorObject } from "ajv";
+import chalk from "chalk";
 import { spawnSync } from "child_process";
 import { OptionValues, program } from "commander";
-import Ajv, { ErrorObject } from "ajv";
-import betterAjvErrors from "@readme/better-ajv-errors";
 import { existsSync, readFileSync } from "fs";
-import chalk from "chalk";
 
-import { IConfiguration } from "./types.js";
-import { Generator } from "./Generator.js";
 import { globSync } from "glob";
 import { dirname, join } from "path";
-import { FileUtils } from "./FileUtils.js";
 import { fileURLToPath } from "url";
+import { FileUtils } from "./FileUtils.js";
+import { Generator } from "./Generator.js";
+import { IConfiguration } from "./types.js";
+
+const sourcePath = fileURLToPath(dirname(import.meta.url));
+const schemaPath = join(sourcePath, "./config-schema.json");
+const configSchema = JSON.parse(readFileSync(schemaPath, { encoding: "utf-8" }));
 
 interface IAppParameters extends OptionValues {
     /**
@@ -55,8 +56,7 @@ const processConfiguration = (configPath?: string): IConfiguration => {
         if (!valid) {
             console.log(`\nFound config validation errors in ${configPath}\n`);
 
-            // @ts-expect-error, because the type definition export is wrong.
-            const error = betterAjvErrors(configSchema, config, validate.errors as ErrorObject[], {
+            const error = betterAjvErrors.default(configSchema, config, validate.errors as ErrorObject[], {
                 json: content,
             });
             console.log(error + "\n");
@@ -94,7 +94,7 @@ if (!options.silent) {
     console.log("Processing options...");
 }
 
-// We have to derive the work direct from the current file path, which differs between running here and
+// We have to derive the work dir directly from the current file path, which differs between running here and
 // running as a package. The strategy is to find the closest package.json file and use that as the base.
 let basePath = dirname(fileURLToPath(import.meta.url));
 while (!existsSync(join(basePath, "package.json")) && basePath !== "/") {
