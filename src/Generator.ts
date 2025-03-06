@@ -16,11 +16,12 @@ import { CustomDescriptors } from "./CustomDescriptors.js";
 import { RuntimeTestDescriptorParser } from "./RuntimeTestDescriptorParser.js";
 import { FileUtils } from "./FileUtils.js";
 
+const runningAsGitHubAction = process.env.GITHUB_ACTIONS === "true";
+
 /**
- * This file generates the test cases for the runtime testsuite. It uses the test descriptors files
+ * This class generates the test cases for the runtime testsuite. It uses the test descriptors files
  * and generates all files needed to run the tests, including the test spec file.
  */
-
 export class Generator {
 
     private readonly testDescriptors = new Map<string, IRuntimeTestDescriptor[]>();
@@ -371,6 +372,12 @@ export class Generator {
     }
 
     private updateLine(newContent: string) {
+        if (runningAsGitHubAction) {
+            console.log(newContent);
+
+            return;
+        }
+
         this.clearLine();
         process.stdout.write(newContent);
     }
