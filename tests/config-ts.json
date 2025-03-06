@@ -5,7 +5,7 @@
     "testFileName": "Test.spec",
     "testAnnotations": [
         "test",
-        "xit"
+        "test.skip"
     ],
     "grammarTemplateFile": "./fixtures/templates/TypeScript.grammar.stg",
     "specTemplateFile": "./fixtures/templates/TypeScript.spec.stg",
