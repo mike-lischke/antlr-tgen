@@ -7,7 +7,7 @@
  */
 
 import betterAjvErrors from "@readme/better-ajv-errors";
-import Ajv, { ErrorObject } from "ajv";
+import { Ajv } from "ajv";
 import chalk from "chalk";
 import { OptionValues, program } from "commander";
 import { existsSync, readFileSync } from "fs";
@@ -21,7 +21,7 @@ import { IConfiguration } from "./types.js";
 
 const sourcePath = fileURLToPath(dirname(import.meta.url));
 const schemaPath = join(sourcePath, "./config-schema.json");
-const configSchema = JSON.parse(readFileSync(schemaPath, { encoding: "utf-8" }));
+const configSchema = JSON.parse(readFileSync(schemaPath, { encoding: "utf-8" })) as Record<string, unknown>;
 
 interface IAppParameters extends OptionValues {
     /**
@@ -49,13 +49,13 @@ const processConfiguration = (configPath?: string): IConfiguration => {
         const config = JSON.parse(content) as IConfiguration;
 
         // Validate the configuration file using our schema.
-        const ajv = new Ajv.default({ allErrors: true, verbose: true });
+        const ajv = new Ajv({ allErrors: true, verbose: true });
         const validate = ajv.compile(configSchema);
         const valid = validate(config);
         if (!valid) {
             console.log(`\nFound config validation errors in ${configPath}\n`);
 
-            const error = betterAjvErrors.default(configSchema, config, validate.errors as ErrorObject[], {
+            const error = betterAjvErrors.default(configSchema, config, validate.errors ?? [], {
                 json: content,
             });
             console.log(error + "\n");

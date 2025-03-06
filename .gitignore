@@ -4,3 +4,4 @@ coverage
 dist
 tests/generated
 index.mjs
+.vscode/numbered-bookmarks.json

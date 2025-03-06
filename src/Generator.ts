@@ -5,9 +5,11 @@
 
 import { mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "fs";
 import { join } from "path";
+import { spawnSync } from "child_process";
+import readline from "node:readline";
+
 import { ST, STGroup, STGroupFile, StringRenderer } from "stringtemplate4ts";
 import chalk from "chalk";
-import { spawnSync } from "child_process";
 
 import { GrammarType, IConfiguration, IGenerationOptions, IRuntimeTestDescriptor } from "./types.js";
 import { CustomDescriptors } from "./CustomDescriptors.js";
@@ -102,7 +104,7 @@ export class Generator {
                 if (!this.silent) {
                     const message = `Processing (${Math.round(10000 * currentTest / this.testCount) / 100}%): ` +
                         `${caption} > ${descriptor.name}`;
-                    process.stdout.write(chalk.green(`\r${message.padEnd(100)}`));
+                    this.updateLine(chalk.green(message));
                 }
 
                 const testPath = join(groupPath, descriptor.name);
@@ -216,7 +218,7 @@ export class Generator {
         });
 
         // Consider stderr output as warnings if the process exited successfully.
-        const errorMessage = output.error?.message;
+        const errorMessage = output.error?.message ?? output.stdout;
         if (errorMessage && errorMessage.length > 0) {
             const lines = errorMessage.split("\n");
 
@@ -361,5 +363,15 @@ export class Generator {
         }
 
         return true;
+    }
+
+    private clearLine() {
+        readline.cursorTo(process.stdout, 0);
+        readline.clearLine(process.stdout, 1);
+    }
+
+    private updateLine(newContent: string) {
+        this.clearLine();
+        process.stdout.write(newContent);
     }
 }
