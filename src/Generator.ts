@@ -159,7 +159,7 @@ export class Generator {
                         }
                     }
                 } else {
-                    if (parserName !== null) {
+                    if (parserName !== undefined) {
                         grammarName = parserName;
                     } else {
                         grammarName = lexerName;
@@ -289,7 +289,7 @@ export class Generator {
 
         const annotation = descriptor.skipTargets?.has(this.config.language) ? 1 : 0;
         let command = "";
-        if (this.config.testAnnotations && this.config.testAnnotations?.length > 0) {
+        if (this.config.testAnnotations && this.config.testAnnotations.length > 0) {
             command = this.config.testAnnotations[annotation] ?? "";
         }
         outputFileST.add("testAnnotation", command);

@@ -9,7 +9,6 @@
 import betterAjvErrors from "@readme/better-ajv-errors";
 import Ajv, { ErrorObject } from "ajv";
 import chalk from "chalk";
-import { spawnSync } from "child_process";
 import { OptionValues, program } from "commander";
 import { existsSync, readFileSync } from "fs";
 
@@ -71,13 +70,6 @@ const processConfiguration = (configPath?: string): IConfiguration => {
     process.exit(1);
 };
 
-// Start by testing if Java is installed.
-const output = spawnSync("java", ["-version"], { stdio: "ignore" });
-if (output.error) {
-    console.error("Java is not installed. Please install Java 8 or later.");
-    process.exit(1);
-}
-
 const start = performance.now();
 
 program
@@ -90,7 +82,7 @@ program
 const options = program.opts<IAppParameters>();
 
 if (!options.silent) {
-    console.log(chalk.bold("\nantlr-tgen, the ANTLRng test generator\n"));
+    console.log(chalk.bold("\nantlr-tgen, the antlr-ng test generator\n"));
     console.log("Processing options...");
 }
 

@@ -35,20 +35,23 @@
         "resources"
     ],
     "devDependencies": {
-        "@types/node": "20.11.24",
-        "@typescript-eslint/eslint-plugin": "7.1.0",
-        "@typescript-eslint/eslint-plugin-tslint": "7.0.2",
-        "@typescript-eslint/parser": "7.1.0",
+        "@eslint/js": "9.21.0",
+        "@stylistic/eslint-plugin": "4.2.0",
+        "@stylistic/eslint-plugin-ts": "4.2.0",
+        "@types/node": "22.13.9",
+        "@typescript-eslint/eslint-plugin": "8.26.0",
+        "@typescript-eslint/parser": "8.26.0",
         "esbuild": "0.25.0",
-        "eslint": "8.57.0",
-        "eslint-plugin-import": "2.29.1",
-        "eslint-plugin-jsdoc": "48.2.0",
+        "eslint": "9.21.0",
+        "eslint-plugin-import": "2.31.0",
+        "eslint-plugin-jsdoc": "50.6.3",
         "eslint-plugin-prefer-arrow": "1.2.3",
         "ts-json-schema-generator": "2.3.0",
         "ts-node": "10.9.2",
         "tsx": "4.19.3",
         "typescript": "5.8.2",
-        "vitest": "^3.0.7"
+        "typescript-eslint": "8.26.0",
+        "vitest": "3.0.7"
     },
     "dependencies": {
         "@readme/better-ajv-errors": "2.3.2",
