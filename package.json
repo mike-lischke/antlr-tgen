@@ -1,6 +1,6 @@
 {
     "name": "@mike-lischke/antlr-tgen",
-    "version": "1.0.9",
+    "version": "1.0.10",
     "description": "A generator for antlr-ng runtime test cases",
     "type": "module",
     "bin": {
