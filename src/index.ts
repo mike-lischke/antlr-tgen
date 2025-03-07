@@ -97,7 +97,7 @@ const configPath = join(process.cwd(), dirname(options.config!));
 const details = processConfiguration(options.config);
 
 const generator = new Generator(basePath, configPath, details, options.silent ?? false, options.verbose ?? false);
-generator.generate();
+const succeeded = generator.generate();
 console.log();
 
 if (!options.silent) {
@@ -121,3 +121,9 @@ if (details.files && details.files.length > 0) {
 if (!options.silent) {
     console.log(`\nDone in ${Math.round((performance.now() - start) / 1000)}s\n`);
 }
+
+if (succeeded) {
+    process.exit(0);
+}
+
+process.exit(1);

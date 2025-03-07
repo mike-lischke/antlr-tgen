@@ -32,7 +32,7 @@ export class Generator {
         private silent: boolean, private verbose: boolean) {
     }
 
-    public generate(): void {
+    public generate(): boolean {
         this.readDescriptorsFromDisk();
         this.addCustomDescriptors();
 
@@ -40,8 +40,7 @@ export class Generator {
             console.log(`Found ${this.testCount} tests.\n`);
         }
 
-        // Interestingly, it does not speed up the generation when using promises here.
-        this.writeTestFiles();
+        return this.writeTestFiles();
     }
 
     private readDescriptorsFromDisk(): void {
@@ -90,7 +89,7 @@ export class Generator {
         }
     }
 
-    private writeTestFiles(): void {
+    private writeTestFiles(): boolean {
         let currentTest = 0;
         for (const [caption, descriptors] of this.testDescriptors) {
             const groupPath = join(this.configPath, this.config.targetPath ?? "tests", caption);
@@ -178,9 +177,14 @@ export class Generator {
                     useVisitor: useListenerOrVisitor,
                 };
 
-                this.generateParserFiles(testPath, runOptions, descriptor);
+                const success = this.generateParserFiles(testPath, runOptions, descriptor);
+                if (!success) {
+                    return false;
+                }
             };
         }
+
+        return true;
     }
 
     /**
@@ -190,6 +194,7 @@ export class Generator {
      * @param targetName The target language to generate.
      * @param grammarFileName The name of the grammar file.
      * @param options Additional options for the antlr process.
+     *
      * @returns True if the process was successful, false otherwise.
      */
     private generateANTLRFilesInWorkDir(workdir: string, targetName: string, grammarFileName: string,
@@ -287,9 +292,11 @@ export class Generator {
      * @param targetPath The folder for this particular test.
      * @param runOptions Details for the generation.
      * @param descriptor The descriptor for the test.
+     *
+     * @returns True if the generation was successful, false otherwise.
      */
     private generateParserFiles(targetPath: string, runOptions: IGenerationOptions,
-        descriptor: IRuntimeTestDescriptor): void {
+        descriptor: IRuntimeTestDescriptor): boolean {
         const options: string[] = [];
         if (runOptions.useVisitor) {
             options.push("-v");
@@ -307,11 +314,13 @@ export class Generator {
         const success = this.generateANTLRFilesInWorkDir(targetPath, this.config.language, grammarFileName, options);
 
         if (!success) {
-            return;
+            return false;
         }
 
         this.writeTestFile(targetPath, runOptions, descriptor);
         writeFileSync(join(targetPath, "input"), descriptor.input);
+
+        return true;
     };
 
     private matchesPattern(name: string, patterns: string[]): boolean {
