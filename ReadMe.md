@@ -141,18 +141,4 @@ How to accomplish the last step depends on your target language and how tests in
 
 ## Release Notes
 
-### 1.0.10
-
-antlr-tgen now full runs on antlr-ng
-
-### 1.0.8 - 1.0.9
-
-Upgraded dependencies.
-
-### 1.0.7
-
-Fixed path handling + repository clean up.
-
-### 1.0.0 - 1.0.6
-
-First public release + several attempts to get the package running as intended.
+See [release-notes.md](./release-notes.md)
