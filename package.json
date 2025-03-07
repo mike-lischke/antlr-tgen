@@ -56,7 +56,7 @@
     "dependencies": {
         "@readme/better-ajv-errors": "2.3.2",
         "ajv": "8.17.1",
-        "antlr-ng": "1.0.7",
+        "antlr-ng": "^1.0.8",
         "antlr4ng": "3.0.16",
         "chalk": "5.4.1",
         "commander": "13.1.0",

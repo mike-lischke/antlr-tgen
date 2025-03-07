@@ -74,7 +74,7 @@ const start = performance.now();
 
 program
     .option("-c, --config <path>", "Path to a JSON file containing the formatting options to use.")
-    .option("-s, --silent", "Suppress all output except errors.")
+    .option("-s, --silent", "Suppress all output including errors.")
     .option("-v, --verbose", "Print additional information.")
     .version("antlr-tgen 1.0.0")
     .parse();

@@ -7,7 +7,7 @@ import { mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "f
 import readline from "node:readline";
 import { join } from "path";
 
-import { Tool } from "antlr-ng";
+import { Tool, type ANTLRMessage } from "antlr-ng";
 import chalk from "chalk";
 import { ST, STGroup, STGroupFile, StringRenderer } from "stringtemplate4ts";
 
@@ -220,19 +220,26 @@ export class Generator {
         const antlr = new Tool(options);
 
         if (!this.verbose) {
-            // Add an own listener which just ignores all output.
+            // Add an own listener which just ignores all output (except errors in non-silent mode).
             antlr.errorManager.addListener({
                 errorManager: antlr.errorManager,
                 info: () => { /**/ },
                 warning: () => { /**/ },
-                error: () => { /**/ },
+                error: (message: ANTLRMessage) => {
+                    if (!this.silent) {
+                        console.error(message);
+                    }
+                },
             });
         }
         try {
             antlr.processGrammarsOnCommandLine();
         } catch (e) {
-            //antlr.errorManager.toolError(IssueCode.InternalError, e);
-            console.error(e);
+            if (!this.silent) {
+                console.error(e);
+            }
+
+            return false;
         }
 
         return antlr.errorManager.errors === 0;
