@@ -8,21 +8,35 @@
 
 # antlr-tgen, the antlr-ng test case generator
 
-The ANTLR-tgen test generator tool is designed to simplify the development of an ANTLR target runtime. It uses a set of test descriptor files (plain text) and generates all the files needed to test a runtime. This usually includes an input file, grammars and the parser/lexer files generated from them, and a source file that uses the generated parser to process the input and compare it with expected output text and errors. The whole test suite is based on this principle: read input, lex and/or parse it, and check the output.
+The antlr-tgen test generator tool is designed to simplify the development of an antlr-ng target runtime. It uses a set of test descriptor files (plain text) and generates all the files needed to test a runtime. For each generated test there is:
 
-The generation process is controlled by 2 template files (written in [StringTemplate4](https://github.com/antlr/stringtemplate4/blob/master/doc/index.md) syntax), which control the grammar generation from the descriptors and how the final test file looks like. These two files are target language specific and must be provided by the runtime author.
+- One or more grammars, to generate a parser.
+- An input file.
+- The test (spec) file, which imports the generated parser and runs it with the given input. This file also contains expected output to compare the results of the parse run.
 
-> In the current version of this tool, only existing target languages are supported for test generation, simply because the tool used for parser generation is still the ANTLR4 jar. This limitation will be removed when the ANTLR tool is ported to TypeScript and new languages can be configured using a plugin system.
+The generation process is (currently) controlled by 2 template files (written in [StringTemplate4](https://github.com/antlr/stringtemplate4/blob/master/doc/index.md) syntax), which determine how the grammar generation from the descriptors and how the final test file looks like. These two files are target language specific and must be provided by the runtime author.
+
+> In the current version of this tool, only existing target languages are supported for test generation. This limitation will be removed when the antlr-ng tool supports external configuration of target languages.
 
 ## Installation
 
-Install the test case generator like any other Node.js package:
+For this tool to work you need [Node.js](https://nodejs.org/en) to be installed, which contains a tool named NPM. Once installed you can install `antlr-tgen` as a global command using:
+
+```bash
+npm i -g @mike-lischke/antlr-tgen
+```
+
+This makes it available as a normal terminal command, which can be used like a bash command.
+
+If you only want to have it in your project where you want to generate the tests set up a typescript project and run
 
 ```bash
 npm i @mike-lischke/antlr-tgen
 ```
 
-It will add a binary command to your project (or a global command if installed globally), which can then be used to generate the runtime tests.
+in its root folder (where `package.json` is located).
+
+It will add a binary command to your project, which can then can be used in an NPM script to run the test generation.
 
 ## Usage
 
@@ -36,7 +50,7 @@ where `my-config.json` is the file that contains the details for the generation 
 
 ### Configuration File
 
-The configuration file is pretty simple. Here's an example for the TypeScript runtime:
+The configuration file is a collection of values to guide the generation. Here's an example for the TypeScript runtime:
 
 ```json
 {
@@ -65,7 +79,7 @@ The configuration file is pretty simple. Here's an example for the TypeScript ru
 
 Each fields is described below. Note that all relative paths in the file are relative to the location of the configuration file.
 
-* **language** (mandatory) - The language identifier, which is used to generate the parser/lexer files via ANTLR.
+* **language** (mandatory) - The language identifier, which is used to generate the parser/lexer files via antlr-ng.
 * **targetPath** (optional, default: `./tests`) - The root path for the generated tests.
 * **targetExtension** (mandatory) - The extension to use for the generated test (spec) files.
 * **testFileName** (optional, default: `Test`) - The name of the test (spec) file, without the extension.
@@ -80,13 +94,13 @@ Each fields is described below. Note that all relative paths in the file are rel
 
 ## Test Structure
 
-The ANTLR-tgen tools comes with a set of test descriptors, taken from the ANTLR4 runtime-tests, which are organized in folders (as groups) and individual descriptors (one per test). Each of the descriptors contains sections that determine different aspects of a test (main grammar, included grammars, test input, expected output and expected errors, and so on).
+The antlr-tgen tool comes with a set of test descriptors, taken from the ANTLR4 runtime-tests, which are organized in folders (as groups) and individual descriptors (one per test). Each of the descriptors contains sections that determine different aspects of a test (main grammar, included grammars, test input, expected output and expected errors).
 
-On execution the generator creates a folder for each group and in that a folder for each test. A test folder receives the grammars that were generated from the descriptor in conjunction with the grammar template file. Then [antlr4ng-cli](https://www.npmjs.com/package/antlr4ng-cli) is used to generate the source files (parser, lexer, listener, visitor, depending on settings in the descriptor). Finally a test file is generated from the spec template that imports the generated files and runs the lexer or parser. The exact structure of the test file is entirely determined by the spec template group file.
+On execution the generator creates a folder for each group and in that a folder for each test. A test folder receives the grammars that were generated from the descriptor in conjunction with the grammar template file. Then [antlr-ng](https://www.npmjs.com/package/antlr-ng) is used to generate the source files (parser, lexer, listener, visitor, depending on settings in the descriptor). Finally a test file is generated from the spec template that imports the generated files and runs the lexer or parser. The exact structure of the test file is entirely determined by the spec template group file.
 
 ## Template Files
 
-As mentioned above there are 2 template group files (*.stg) that control how target files are generated. The first one is for generating grammar files and the second one for generating the test files. ANTLR uses template files (and the [StringTemplate4](https://github.com/antlr/stringtemplate4/blob/master/doc/index.md) library) to create text content based on certain rules and input values. This allows to use, for example, a generic `<writeln("\"S.A\"")>` in the test descriptors, which is then converted to target specific code (e.g. `console.log("\"S.A\"")` for TypeScript/JavaScript). You are free to specify anything that fits your use case, by adding a template to your template group files (e.g. for TS/JS `writeln(s) ::= <<console.log(<s>);>>`). If you are new to target runtime development check existing template files for what's possible (and needed). Unfortunately, it is not documented which template names ANTLR uses when generating parser files, so base your own template file on something existing that is close enough to your own target language.
+As mentioned above there are 2 template group files (*.stg) that control how target files are generated. The first one is for generating grammar files and the second one for generating the test files. antlr-ng uses template files (and the [StringTemplate4](https://github.com/antlr/stringtemplate4/blob/master/doc/index.md) library) to create text content based on certain rules and input values. This allows to use, for example, a generic `<writeln("\"S.A\"")>` in the test descriptors, which is then converted to target specific code (e.g. `console.log("\"S.A\"")` for TypeScript/JavaScript). You are free to specify anything that fits your use case, by adding a template to your template group files (e.g. for TS/JS `writeln(s) ::= <<console.log(<s>);>>`). If you are new to target runtime development check existing template files for what's possible (and needed). Unfortunately, it is not documented which template names ANTLR4 uses when generating parser files, so base your own template file on something existing that is close enough to your own target language.
 
 The test template file, on the other hand, mostly determines how a test looks like, what's included and which values to use for the test itself. It uses conditional templates to include certain parts (e.g. visitors) only when really needed. For example it usually contains this part:
 
@@ -123,7 +137,7 @@ A test always consists of these steps:
 - Print diagnostic information and/or the DFA to the process standard output, if enabled. Also print errors to the process error output.
 - Compare both standard and error output to the given expected values and pass or fail the test based on the outcome.
 
-How to accomplish the last step depends on your target language and how tests in your environment are executed. Java, for example, runs each test in an own process and captures its output, to compare it with the expected values, while TypeScript runs all tests in parallel in its testing framework (antlr4ng uses Jest). You can either do the validation in the generated test file or (manually) create another file that includes all generated test files, compiles them as single binary and run that as a whole (which would probably the best way for compiled languages like C++). In either case you have to set up your testing environment to consume the generated test files somehow.
+How to accomplish the last step depends on your target language and how tests in your environment are executed. Java, for example, runs each test in an own process and captures its output, to compare it with the expected values, while TypeScript runs all tests in parallel in its testing framework (antlr4ng uses vitest). You can either do the validation in the generated test file or (manually) create another file that includes all generated test files, compiles them as single binary and run that as a whole (which would probably the best way for compiled languages like C++). In either case you have to set up your testing environment to consume the generated test files somehow.
 
 ## Release Notes
 
