@@ -31,7 +31,6 @@
                 "src/index.ts",
                 "--config",
                 "tests/config-ts.json",
-                "-v",
             ],
             "sourceMaps": true,
             "outputCapture": "std",

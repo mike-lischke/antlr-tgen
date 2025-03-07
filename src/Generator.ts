@@ -4,17 +4,17 @@
  */
 
 import { mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "fs";
-import { join } from "path";
-import { spawnSync } from "child_process";
 import readline from "node:readline";
+import { join } from "path";
 
-import { ST, STGroup, STGroupFile, StringRenderer } from "stringtemplate4ts";
+import { IssueCode, Tool } from "antlr-ng";
 import chalk from "chalk";
+import { ST, STGroup, STGroupFile, StringRenderer } from "stringtemplate4ts";
 
-import { GrammarType, IConfiguration, IGenerationOptions, IRuntimeTestDescriptor } from "./types.js";
 import { CustomDescriptors } from "./CustomDescriptors.js";
-import { RuntimeTestDescriptorParser } from "./RuntimeTestDescriptorParser.js";
 import { FileUtils } from "./FileUtils.js";
+import { RuntimeTestDescriptorParser } from "./RuntimeTestDescriptorParser.js";
+import { GrammarType, IConfiguration, IGenerationOptions, IRuntimeTestDescriptor } from "./types.js";
 
 const runningAsGitHubAction = process.env.GITHUB_ACTIONS === "true";
 
@@ -184,12 +184,12 @@ export class Generator {
     }
 
     /**
-     * Run ANTLR on stuff in workdir and error queue back
+     * Run antlr-ng on stuff in workdir.
      *
-     * @param workdir The working directory for the ANTLR process.
+     * @param workdir The working directory for the tool run.
      * @param targetName The target language to generate.
      * @param grammarFileName The name of the grammar file.
-     * @param options Additional options for the ANTLR process.
+     * @param options Additional options for the antlr process.
      * @returns True if the process was successful, false otherwise.
      */
     private generateANTLRFilesInWorkDir(workdir: string, targetName: string, grammarFileName: string,
@@ -212,45 +212,24 @@ export class Generator {
         options.push(join(workdir, grammarFileName));
 
         // Generate test parsers, lexers and listeners.
-        const output = spawnSync("antlr-ng", ["--exact-output-dir", ...options], {
-            encoding: "utf-8",
-            cwd: workdir,
-            stdio: ["ignore", "pipe", "pipe"],
-        });
+        const antlr = new Tool(options);
 
-        // Consider stderr output as warnings if the process exited successfully.
-        const errorMessage = output.error?.message ?? output.stdout;
-        if (errorMessage && errorMessage.length > 0) {
-            const lines = errorMessage.split("\n");
-
-            // Remove debugger attached and waiting for debugger messages.
-            const filteredLines = lines.filter((line) => {
-                if (line.length === 0) {
-                    return false;
-                }
-
-                return !line.startsWith("Debugger attached.")
-                    && !line.startsWith("Waiting for the debugger to disconnect...");
+        if (!this.verbose) {
+            // Add an own listener which just ignores all output.
+            antlr.errorManager.addListener({
+                errorManager: antlr.errorManager,
+                info: () => { /**/ },
+                warning: () => { /**/ },
+                error: () => { /**/ },
             });
-
-            if (filteredLines.length > 0) {
-                if (output.status === 0 && this.verbose) {
-                    console.log(); // Add line break;
-                }
-
-                filteredLines.forEach((line) => {
-                    if (output.status === 0) {
-                        if (this.verbose) {
-                            console.log(chalk.yellow("\t" + line));
-                        }
-                    } else {
-                        console.log(chalk.red(line));
-                    }
-                });
-            }
+        }
+        try {
+            antlr.processGrammarsOnCommandLine();
+        } catch (e) {
+            antlr.errorManager.toolError(IssueCode.InternalError, e);
         }
 
-        return output.status === 0 && !errorMessage;
+        return antlr.errorManager.errors === 0;
     }
 
     private consolidate(text: string): string {
