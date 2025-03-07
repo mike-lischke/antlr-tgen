@@ -7,7 +7,7 @@ import { mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "f
 import readline from "node:readline";
 import { join } from "path";
 
-import { IssueCode, Tool } from "antlr-ng";
+import { Tool } from "antlr-ng";
 import chalk from "chalk";
 import { ST, STGroup, STGroupFile, StringRenderer } from "stringtemplate4ts";
 
@@ -226,7 +226,8 @@ export class Generator {
         try {
             antlr.processGrammarsOnCommandLine();
         } catch (e) {
-            antlr.errorManager.toolError(IssueCode.InternalError, e);
+            //antlr.errorManager.toolError(IssueCode.InternalError, e);
+            console.error(e);
         }
 
         return antlr.errorManager.errors === 0;
