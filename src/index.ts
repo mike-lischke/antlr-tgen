@@ -20,7 +20,7 @@ import { Generator } from "./Generator.js";
 import { IConfiguration } from "./types.js";
 
 const sourcePath = fileURLToPath(dirname(import.meta.url));
-const schemaPath = join(sourcePath, "./config-schema.json");
+const schemaPath = join(sourcePath, "../resources/config-schema.json");
 const configSchema = JSON.parse(readFileSync(schemaPath, { encoding: "utf-8" })) as Record<string, unknown>;
 
 interface IAppParameters extends OptionValues {

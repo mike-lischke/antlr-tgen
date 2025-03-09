@@ -7,6 +7,10 @@
 
 # antlr-tgen Release Notes
 
+## 1.0.12
+
+The config-schema.json file must be included in the package to rung the test generator.
+
 ## 1.0.11
 
 - The generator now uses the antlr-ng tool in code (instead of starting a full process with the command line script). This speeds up the generation from 130s to just 9s.

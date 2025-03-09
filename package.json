@@ -1,6 +1,6 @@
 {
     "name": "@mike-lischke/antlr-tgen",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "description": "A generator for antlr-ng runtime test cases",
     "type": "module",
     "bin": {
@@ -9,7 +9,7 @@
     "scripts": {
         "prepublishOnly": "npm run build && npm run test",
         "build": "esbuild ./src/index.ts --main-fields=module,main --bundle --outdir=dist/ --platform=node --format=esm --minify --packages=external",
-        "generate-configuration-schema": "./node_modules/.bin/ts-json-schema-generator --path 'src/types.ts' --type 'IConfiguration' > src/config-schema.json",
+        "generate-configuration-schema": "./node_modules/.bin/ts-json-schema-generator --path 'src/types.ts' --type 'IConfiguration' > resources/config-schema.json",
         "test": "vitest run --no-watch --no-coverage",
         "run-generator-ts": "tsx src/index.ts --config tests/config-ts.json",
         "run-generator-cpp": "tsx src/index.ts --config tests/config-cpp.json",
@@ -47,7 +47,6 @@
         "eslint-plugin-jsdoc": "50.6.3",
         "eslint-plugin-prefer-arrow": "1.2.3",
         "ts-json-schema-generator": "2.3.0",
-        "ts-node": "10.9.2",
         "tsx": "4.19.3",
         "typescript": "5.8.2",
         "typescript-eslint": "8.26.0",
@@ -56,7 +55,7 @@
     "dependencies": {
         "@readme/better-ajv-errors": "2.3.2",
         "ajv": "8.17.1",
-        "antlr-ng": "s1.0.8",
+        "antlr-ng": "1.0.8",
         "antlr4ng": "3.0.16",
         "chalk": "5.4.1",
         "commander": "13.1.0",
