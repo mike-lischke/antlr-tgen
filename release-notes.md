@@ -9,7 +9,7 @@
 
 ## 1.0.12
 
-The config-schema.json file must be included in the package to rung the test generator.
+The config-schema.json file must be included in the package to run the test generator.
 
 ## 1.0.11
 
